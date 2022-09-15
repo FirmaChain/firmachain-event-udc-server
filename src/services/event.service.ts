@@ -84,7 +84,9 @@ class EventService {
         const session = await this.connectService.connect(PROJECT_SECRET_KEY);
         const signDoc = await this.connectService.getSignDoc(signer, pubkey, message);
 
-        const qrcode = await this.connectService.getQRCodeForDirectSign(session, signer, signDoc, info);
+        const qrcode = await this.connectService.getQRCodeForDirectSign(session, signer, signDoc, info, {
+          fctPrice: 1,
+        });
         const requestKey = qrcode.replace('sign://', '');
 
         await this.addRequest('PLAY', requestKey, signDoc, signer, nftType);

@@ -108,7 +108,6 @@ class EventController {
     this.eventService
       .getNftList()
       .then((result) => {
-        resultLog(result);
         res.send({ ...SUCCESS, result });
       })
       .catch(() => {

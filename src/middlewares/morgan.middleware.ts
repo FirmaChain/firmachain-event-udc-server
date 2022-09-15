@@ -4,8 +4,10 @@ import { logger } from '../utils/logger';
 
 const morganMiddleware = Morgan(
   (tokens: any, req: any, res: any) => {
-    if (req.path.includes('/requests') === false) {
-      return ['📘[ END ]', tokens.method(req, res), tokens.url(req, res), tokens.status(req, res)].join(' ');
+    if ((tokens.method(req, res) === 'GET' && req.path.includes('/event/nft') === true) === false) {
+      if (req.path.includes('/requests') === false) {
+        return ['📘[ END ]', tokens.method(req, res), tokens.url(req, res), tokens.status(req, res)].join(' ');
+      }
     }
   },
   {
