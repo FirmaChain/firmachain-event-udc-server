@@ -105,6 +105,17 @@ export class ConnectService {
   public async verifyArbitary(data: string, message: string) {
     return FirmaUtil.experimentalAdr36Verify(JSON.parse(data), message);
   }
+
+  public async getNftImageURI(nftId: string) {
+    try {
+      const result = await this.firmaSDK.Nft.getNftItem(nftId);
+      const response = await axios.get(result.tokenURI);
+      return response.data.imageURI;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }
 
 class RequestService {

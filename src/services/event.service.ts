@@ -104,10 +104,14 @@ class EventService {
     }
   }
 
-  public async arbitarySignForReward(signer: string): Promise<{ requestKey: string; qrcode: string }> {
+  public async arbitarySignForReward(
+    signer: string
+  ): Promise<{ requestKey: string; qrcode: string; nftName: string; nftImageURI: string }> {
     try {
       let requestKey = '';
       let qrcode = '';
+      let nftName = '';
+      let nftImageURI = '';
 
       if ((await this.isRewardable(signer)) === true) {
         const message: string = v4();
@@ -117,12 +121,19 @@ class EventService {
         qrcode = await this.connectService.getQRCodeForArbitarySign(session, message, info, signer);
         requestKey = qrcode.replace('sign://', '');
 
+        const rewardData = await this.getTicketResult(signer);
+        const rewardJSON = JSON.parse(rewardData);
+        nftName = rewardJSON.nftData.name;
+        nftImageURI = rewardJSON.nftData.imageURL;
+
         await this.addRequest('REWARD', requestKey, message);
       }
 
       return {
         requestKey,
         qrcode,
+        nftName,
+        nftImageURI,
       };
     } catch (error) {
       console.log(error);
@@ -130,8 +141,13 @@ class EventService {
     }
   }
 
-  public async callback(requestKey: string, signData: any): Promise<void> {
+  public async callback(requestKey: string, approve: boolean, signData: any): Promise<void> {
     const requestData = await this.getRequest(requestKey);
+
+    if (approve === false) {
+      await this.changeRequestStatus(requestKey, INVALID);
+      return;
+    }
 
     try {
       switch (requestData.type) {
@@ -147,6 +163,7 @@ class EventService {
       }
     } catch (error) {
       console.log(error);
+      await this.changeRequestStatus(requestKey, INVALID);
     }
   }
 
@@ -178,12 +195,21 @@ class EventService {
   }
 
   private async getCurrentReward(nftType: string): Promise<any> {
-    const nftData = await this.popNft(nftType);
+    const nftData: any = await this.popNft(nftType);
     const tokenData = await this.popToken();
+
+    const nftJSON = JSON.parse(nftData);
+    const imageURL = await this.connectService.getNftImageURI(nftJSON.nftId);
+
+    const nftMetaData = await this.getNftData(nftJSON.dappNftId);
+    const nftMetaJSON = JSON.parse(nftMetaData);
+    const name = nftMetaJSON.name;
 
     return {
       nftData,
       tokenData,
+      imageURL,
+      name,
     };
   }
 
@@ -315,7 +341,8 @@ class EventService {
     addedAt: string;
   }> {
     const result = await this.storeService.hgetAll(`${EVENT_REQUEST}${requestKey}`);
-    result.status = Number(result.status);
+    if (result.status) result.status = Number(result.status);
+    else result.status = -1;
 
     return result;
   }

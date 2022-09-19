@@ -77,10 +77,10 @@ class EventController {
   };
 
   public callback = (req: Request, res: Response): void => {
-    const { requestKey, signData } = req.body;
+    const { requestKey, approve, signData } = req.body;
 
     this.eventService
-      .callback(requestKey, signData)
+      .callback(requestKey, approve, signData)
       .then((result) => {
         resultLog(result);
         res.send({ ...SUCCESS, result });
