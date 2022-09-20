@@ -71,9 +71,11 @@ class EventScheduler {
           logger.info(`🚀[EVENT] !!!FAILED!!! SEND TOKEN ${address} code : ${sendTokenResult.code}`);
           logger.info(sendTokenResult);
 
-          telegrambot.sendMessage(CHAT_ID, `[GAME][FAILED] ${tokenAmount} UET ${address} ${sendTokenResult}`, {
-            disable_web_page_preview: true,
-          });
+          telegrambot.sendMessage(
+            CHAT_ID,
+            `[GAME][FAILED] ${tokenAmount} UET ${address} ${JSON.stringify(sendTokenResult)}`,
+            { disable_web_page_preview: true }
+          );
         } else {
           await this.writeResult(address, sendTokenResult.transactionHash);
           logger.info(`🚀[EVENT] ${address} : ${sendTokenResult.transactionHash}`);
@@ -93,7 +95,7 @@ class EventScheduler {
           logger.info(`🚀[EVENT] !!!FAILED!!! SEND NFT ${address} code : ${sendNFTResult.code}`);
           logger.info(sendNFTResult);
 
-          telegrambot.sendMessage(CHAT_ID, `[GAME][FAILED] NFT #${nftId} ${address} ${sendNFTResult}`, {
+          telegrambot.sendMessage(CHAT_ID, `[GAME][FAILED] NFT #${nftId} ${address} ${JSON.stringify(sendNFTResult)}`, {
             disable_web_page_preview: true,
           });
         } else {
