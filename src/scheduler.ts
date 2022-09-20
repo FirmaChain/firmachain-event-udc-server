@@ -12,9 +12,13 @@ import { getNowTime } from './utils/date';
 import { EVENT_WALLET_MNEMONIC, EVENT_TOKEN_ID, EVENT_REWARD_QUEUE, EVENT_REWARD_RESULT } from './constants/event';
 
 const REDIS = process.env.REDIS!;
+const REDIS_PASS = process.env.REDIS_PASS!;
 
 class EventScheduler {
-  constructor(private storeService = new StoreService({ url: REDIS }), private firmaSDK = new FirmaSDK(FIRMA_CONFIG)) {
+  constructor(
+    private storeService = new StoreService({ url: REDIS, password: REDIS_PASS }),
+    private firmaSDK = new FirmaSDK(FIRMA_CONFIG)
+  ) {
     this.start();
   }
 
