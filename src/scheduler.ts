@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+import TelegramBot from 'node-telegram-bot-api';
 import { FirmaSDK } from '@firmachain/firma-js';
 
 import StoreService from './services/store.service';
@@ -8,11 +9,23 @@ import StoreService from './services/store.service';
 import { FIRMA_CONFIG } from './config';
 import { logger } from './utils/logger';
 import { getNowTime } from './utils/date';
+import { getDecryptString } from './utils/crypto';
 
-import { EVENT_WALLET_MNEMONIC, EVENT_TOKEN_ID, EVENT_REWARD_QUEUE, EVENT_REWARD_RESULT } from './constants/event';
+import {
+  EVENT_WALLET_MNEMONIC,
+  EVENT_TOKEN_ID,
+  EVENT_REWARD_QUEUE,
+  EVENT_REWARD_RESULT,
+  SECRET,
+} from './constants/event';
 
 const REDIS = process.env.REDIS!;
 const REDIS_PASS = process.env.REDIS_PASS!;
+const BOT_TOKEN = process.env.BOT_TOKEN!;
+const CHAT_ID = process.env.CHAT_ID!;
+const EXPLORER_HOST = process.env.EXPLORER_HOST!;
+
+const telegrambot = new TelegramBot(BOT_TOKEN, { polling: false });
 
 class EventScheduler {
   constructor(
@@ -41,7 +54,8 @@ class EventScheduler {
 
         logger.info(`🚀[EVENT] SEND START ${address}`);
 
-        const eventWallet = await this.firmaSDK.Wallet.fromMnemonic(EVENT_WALLET_MNEMONIC);
+        const decryptMnemonic = getDecryptString(EVENT_WALLET_MNEMONIC, SECRET);
+        const eventWallet = await this.firmaSDK.Wallet.fromMnemonic(decryptMnemonic);
 
         logger.info(`🚀[EVENT] SEND TOKEN ${tokenAmount}`);
 
@@ -56,9 +70,19 @@ class EventScheduler {
         if (sendTokenResult.code !== 0) {
           logger.info(`🚀[EVENT] !!!FAILED!!! SEND TOKEN ${address} code : ${sendTokenResult.code}`);
           logger.info(sendTokenResult);
+
+          telegrambot.sendMessage(CHAT_ID, `[GAME][FAILED] ${tokenAmount} UET ${address} ${sendTokenResult}`, {
+            disable_web_page_preview: true,
+          });
         } else {
           await this.writeResult(address, sendTokenResult.transactionHash);
           logger.info(`🚀[EVENT] ${address} : ${sendTokenResult.transactionHash}`);
+
+          telegrambot.sendMessage(
+            CHAT_ID,
+            `[GAME][SUCCESS] ${tokenAmount} UET ${address}\n${EXPLORER_HOST}/transactions/${sendTokenResult.transactionHash}`,
+            { disable_web_page_preview: true }
+          );
         }
 
         logger.info(`🚀[EVENT] SEND NFT ${nftId}`);
@@ -68,9 +92,19 @@ class EventScheduler {
         if (sendNFTResult.code !== 0) {
           logger.info(`🚀[EVENT] !!!FAILED!!! SEND NFT ${address} code : ${sendNFTResult.code}`);
           logger.info(sendNFTResult);
+
+          telegrambot.sendMessage(CHAT_ID, `[GAME][FAILED] NFT #${nftId} ${address} ${sendNFTResult}`, {
+            disable_web_page_preview: true,
+          });
         } else {
           await this.writeResult(address, sendNFTResult.transactionHash);
           logger.info(`🚀[EVENT] ${address} : ${sendNFTResult.transactionHash}`);
+
+          telegrambot.sendMessage(
+            CHAT_ID,
+            `[GAME][SUCCESS] NFT #${nftId} ${address}\n${EXPLORER_HOST}/transactions/${sendNFTResult.transactionHash}`,
+            { disable_web_page_preview: true }
+          );
         }
 
         logger.info(`🚀[EVENT] SEND END ${address}`);
