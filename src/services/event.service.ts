@@ -275,7 +275,7 @@ class EventService {
 
     return {
       nftId: nftJSON.nftId,
-      name: nftJSON.name,
+      name: nftJSON.name.replace('2022', 'EVENT'),
       description: nftJSON.description,
       attributes: nftJSON.attributes,
     };
