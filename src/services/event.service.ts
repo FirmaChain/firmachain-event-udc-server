@@ -193,7 +193,7 @@ class EventService {
     currentReward.isQueue = true;
 
     await this.addTicketResult(signer, JSON.stringify(currentReward));
-    await this.addRewardQueue(signer, currentReward);
+    await this.addRewardQueue(signer, JSON.stringify(currentReward));
   }
 
   private async getCurrentReward(nftType: string): Promise<any> {
