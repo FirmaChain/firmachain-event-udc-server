@@ -113,21 +113,21 @@ class EventService {
       let nftName = '';
       let nftImageURI = '';
 
-      if ((await this.isRewardable(signer)) === true) {
-        const message: string = v4();
-        const info: string = REWARD_MESSAGE;
+      // if ((await this.isRewardable(signer)) === true) {
+      //   const message: string = v4();
+      //   const info: string = REWARD_MESSAGE;
 
-        const session = await this.connectService.connect(PROJECT_SECRET_KEY);
-        qrcode = await this.connectService.getQRCodeForArbitarySign(session, message, info, signer);
-        requestKey = qrcode.replace('sign://', '');
+      //   const session = await this.connectService.connect(PROJECT_SECRET_KEY);
+      //   qrcode = await this.connectService.getQRCodeForArbitarySign(session, message, info, signer);
+      //   requestKey = qrcode.replace('sign://', '');
 
-        const rewardData = await this.getTicketResult(signer);
-        const rewardJSON = JSON.parse(rewardData);
-        nftName = rewardJSON.nftData.name;
-        nftImageURI = rewardJSON.nftData.imageURL;
+      //   const rewardData = await this.getTicketResult(signer);
+      //   const rewardJSON = JSON.parse(rewardData);
+      //   nftName = rewardJSON.nftData.name;
+      //   nftImageURI = rewardJSON.nftData.imageURL;
 
-        await this.addRequest('REWARD', requestKey, message);
-      }
+      //   await this.addRequest('REWARD', requestKey, message);
+      // }
 
       return {
         requestKey,
@@ -158,7 +158,7 @@ class EventService {
           await this.callbackPlay(requestKey, signData, requestData.signer, requestData.extra);
           break;
         case 'REWARD':
-          await this.callbackReward(signData, requestKey, requestData.message);
+          // await this.callbackReward(signData, requestKey, requestData.message);
           break;
       }
     } catch (error) {
@@ -190,8 +190,10 @@ class EventService {
     await this.changeRequestSignData(requestKey, signData);
 
     const currentReward = await this.getCurrentReward(nftType);
+    currentReward.isQueue = true;
 
     await this.addTicketResult(signer, JSON.stringify(currentReward));
+    await this.addRewardQueue(signer, currentReward);
   }
 
   private async getCurrentReward(nftType: string): Promise<any> {
