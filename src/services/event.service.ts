@@ -279,6 +279,7 @@ class EventService {
       nftId: nftJSON.nftId,
       name: nftJSON.name.replace('2022', 'EVENT'),
       description: nftJSON.description,
+      collection: 'UDC EVENT',
       attributes: nftJSON.attributes,
     };
   }
