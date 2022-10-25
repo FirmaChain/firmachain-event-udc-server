@@ -280,6 +280,7 @@ class EventService {
       name: nftJSON.name.replace('2022', 'EVENT'),
       description: nftJSON.description,
       collection: 'UDC EVENT',
+      createdBy: EVENT_WALLET_ADDRESS,
       attributes: nftJSON.attributes,
     };
   }
