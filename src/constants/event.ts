@@ -19,6 +19,8 @@ export const EVENT_REWARD_QUEUE = process.env.EVENT_REWARD_QUEUE!;
 export const EVENT_REWARD_RESULT = process.env.EVENT_REWARD_RESULT!;
 
 export const ADDRESSBOOK = process.env.ADDRESSBOOK!;
+export const COLLECTION_NAME = process.env.COLLECTION_NAME!;
+export const COLLECTION_ICON = process.env.COLLECTION_ICON!;
 
 export const LOGIN_MESSAGE = process.env.LOGIN_MESSAGE!;
 export const PLAY_MESSAGE = process.env.PLAY_MESSAGE!;

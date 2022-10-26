@@ -17,13 +17,14 @@ import {
   ADDRESSBOOK,
   LOGIN_MESSAGE,
   PLAY_MESSAGE,
-  REWARD_MESSAGE,
   REQUEST_EXPIRE_SECOND,
   EVENT_WALLET_ADDRESS,
   EVENT_TICKET_AMOUNT,
   EVENT_REWARD_NFT_DATA,
   EVENT_REWARD_NFT_QUEUE,
   EVENT_REWARD_TOKEN_QUEUE,
+  COLLECTION_NAME,
+  COLLECTION_ICON,
 } from '../constants/event';
 
 class EventService {
@@ -279,7 +280,10 @@ class EventService {
       nftId: nftJSON.nftId,
       name: nftJSON.name.replace('2022', 'EVENT'),
       description: nftJSON.description,
-      collection: 'UDC EVENT',
+      collection: {
+        name: COLLECTION_NAME,
+        icon: COLLECTION_ICON,
+      },
       createdBy: EVENT_WALLET_ADDRESS,
       attributes: nftJSON.attributes,
     };
