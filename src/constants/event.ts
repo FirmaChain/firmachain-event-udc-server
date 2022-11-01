@@ -29,3 +29,4 @@ export const REWARD_MESSAGE = process.env.REWARD_MESSAGE!;
 export const EVENT_TICKET_AMOUNT = process.env.EVENT_TICKET_AMOUNT!;
 export const EVENT_TOKEN_ID = process.env.EVENT_TOKEN_ID!;
 export const SECRET = process.env.SECRET!;
+export const EXPIRED_EVENT = process.env.EXPIRED_EVENT!;

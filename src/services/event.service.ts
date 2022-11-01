@@ -25,6 +25,7 @@ import {
   EVENT_REWARD_TOKEN_QUEUE,
   COLLECTION_NAME,
   COLLECTION_ICON,
+  EXPIRED_EVENT,
 } from '../constants/event';
 
 class EventService {
@@ -311,6 +312,8 @@ class EventService {
     // Sold out
     const ticketCount = await this.getRemainingTicketCount(nftType);
     if (ticketCount === 0) return false;
+
+    if (EXPIRED_EVENT === 'true') return false;
 
     return true;
   }
