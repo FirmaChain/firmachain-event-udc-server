@@ -2,6 +2,7 @@
 /src/config.ts
 /src/reward.json
 /src/reward.ts
+/src/nftData.json
 /dist
 /node_modules
 /logs

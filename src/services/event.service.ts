@@ -28,8 +28,13 @@ import {
   EXPIRED_EVENT,
 } from '../constants/event';
 
+import nftData from '../nftData.json';
+
 class EventService {
-  constructor(public storeService: StoreService, private connectService: ConnectService = new ConnectService(RELAY)) {}
+  nftData: any;
+  constructor(public storeService: StoreService, private connectService: ConnectService = new ConnectService(RELAY)) {
+    this.nftData = nftData.nftData;
+  }
 
   public async getStatus(
     requestKey: string
@@ -264,8 +269,24 @@ class EventService {
       result.push(ticketCount);
     }
 
+    let nftIdList: { nftId: string; transactionHash: string; createdBy: string; createdAt: string }[] = [];
+
+    for (let i = 0; i < 1000; i++) {
+      if (this.nftData[i.toString()] === undefined) continue;
+
+      const currentNft = this.nftData[i.toString()];
+
+      const nftId = currentNft.nftId;
+      const transactionHash = currentNft.txHash;
+      const createdBy = currentNft.createdBy;
+      const createdAt = currentNft.createdAt;
+
+      nftIdList.push({ nftId, transactionHash, createdBy, createdAt });
+    }
+
     return {
       nftTicketCountList: result,
+      nftIdList,
     };
   }
 
